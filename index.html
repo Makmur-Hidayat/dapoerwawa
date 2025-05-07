@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Warung Sutan</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    .status-bar {
+      text-align: center;
+      font-weight: bold;
+      padding: 10px;
+      color: white;
+      background: #dc3545;
+      margin-bottom: 20px;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 125;
+    }
+    select, textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 6px;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qty-controls button {
+      background: #f7043f;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      border-radius: 4px;
+    }
+    .cart {
+      margin-top: 30px;
+    }
+    .cart-item {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .btn-orange {
+      background: #ff7043;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-orange:hover {
+      background: #e05c35;
+    }
+    .notif {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #f7043f;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      z-index: 999;
+    }
+    .notif.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+<img src="https://i.ibb.co.com/xKN8r2pj/images.jpg" alt="Ikan" style="width:9cm; height:9cm; display:block; margin:auto;" />
+
+  <div id="statusBar" class="status-bar">TUTUP</div>
+  <div id="notif" class="notif"></div>
+
+  <div class="container">
+    <!-- Makanan -->
+    <div class="card">
+      <h3>Makanan</h3>
+      <select id="foodSelect">
+        <option value="">Pilih Menu</option>
+        <option value="menu1-10000">Menu1 - 10.000</option>
+        <option value="menu2-11000">Menu2 - 11.000</option>
+      </select>
+      <select id="foodExtra" multiple>
+        <option value="T1-3000">T1 - 3.000</option>
+        <option value="T2-4000">T2 - 4.000</option>
+      </select>
+      <select id="foodOption">
+        <option value="">Pilih Opsi</option>
+        <option value="Dingin">Dingin</option>
+        <option value="Hangat">Hangat</option>
+        <option value="Kecil">Kecil</option>
+      </select>
+      <div class="qty-controls">
+        <button onclick="updateQty('food', -1)">-</button>
+        <span id="foodQty">1</span>
+        <button onclick="updateQty('food', 1)">+</button>
+        <span>Subtotal: <span id="foodSubtotal">0</span></span>
+      </div>
+      <textarea id="foodNote" placeholder="Catatan (opsional)"></textarea>
+      <button class="btn-orange" onclick="addToCart('food')">Masukkan Keranjang</button>
+    </div>
+
+    <!-- Minuman -->
+    <div class="card">
+      <h3>Minuman</h3>
+      <select id="drinkSelect">
+        <option value="">Pilih Menu</option>
+        <option value="menuA-10000">MenuA - 10.000</option>
+        <option value="menuB-11000">MenuB - 11.000</option>
+      </select>
+      <select id="drinkExtra" multiple>
+        <option value="TA-3000">TA - 3.000</option>
+        <option value="TB-4000">TB - 4.000</option>
+      </select>
+      <select id="drinkOption">
+        <option value="">Pilih Opsi</option>
+        <option value="Hangat">Hangat</option>
+        <option value="Menengah">Menengah</option>
+      </select>
+      <div class="qty-controls">
+        <button onclick="updateQty('drink', -1)">-</button>
+        <span id="drinkQty">1</span>
+        <button onclick="updateQty('drink', 1)">+</button>
+        <span>Subtotal: <span id="drinkSubtotal">0</span></span>
+      </div>
+      <textarea id="drinkNote" placeholder="Catatan (opsional)"></textarea>
+      <button class="btn-orange" onclick="addToCart('drink')">Masukkan Keranjang</button>
+    </div>
+  </div>
+
+  <!-- Keranjang -->
+  <div class="cart">
+    <h3>Keranjang</h3>
+    <div id="cartList"></div>
+    <div>Total Pesanan: <span id="cartTotal">0</span></div>
+    <select id="lokasiAntar" onchange="updateOngkir()">
+      <option value="">Pilih Lokasi Antar</option>
+      <option value="KM 9-6000">KM 9 - 6.000</option>
+      <option value="KM 8-6000">KM 8 - 6.000</option>
+    </select>
+    <div>Total + Ongkir: <span id="totalPlusOngkir">0</span></div>
+    <textarea id="alamatDetail" placeholder="Alamat lengkap: gang, rumah, gedung..."></textarea>
+    <button class="btn-orange" onclick="checkout()">====KIRIM PESANAN KE WHATSAPP ADMIN📤====Pastikan Chatmu terkirim ke Admin yah</button>
+  </div>
+
+  <script>
+    // JavaScript bagian sama seperti yang telah Anda berikan
+  </script>
+</body>
+</html>
+
