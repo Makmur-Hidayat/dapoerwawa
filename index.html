@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Warung Sutan</title>
+  <title>DAPOER WAWA</title>
   <style>
     body {
       font-family: sans-serif;
@@ -20,17 +21,21 @@
       margin-bottom: 20px;
     }
     .container {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 125;
-    }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex: 1 1 150px;
+  max-width: 150px;
+  box-sizing: border-box;
+}
     select, textarea {
       width: 100%;
       margin: 8px 0;
@@ -42,7 +47,7 @@
       gap: 10px;
     }
     .qty-controls button {
-      background: #f7043f;
+      background: #ff7043;
       color: white;
       border: none;
       width: 30px;
@@ -75,7 +80,7 @@
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #f7043f;
+      background: red;
       color: white;
       padding: 10px 15px;
       border-radius: 8px;
@@ -86,10 +91,53 @@
     .notif.show {
       opacity: 1;
     }
+    .btn-kirim {
+  background: #ff7043; /* warna hijau WhatsApp */
+  color: ff7043;
+  font-weight: bold;
+  padding: 16px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+}
+.btn-kirim:hover {
+  background: white;
+}
+.alamat-detail {
+  width: 100%;
+  height: 2cm; /* sekitar 1.5 kali dari tinggi select default */
+  margin-top: 8px;
+  padding: 6px;
+  box-sizing: border-box;
+  resize: vertical;
+}
   </style>
 </head>
 <body>
-<img src="https://i.ibb.co.com/xKN8r2pj/images.jpg" alt="Ikan" style="width:9cm; height:9cm; display:block; margin:auto;" />
+<a href="https://www.instagram.com/makmurhidayat2404?igsh=MTRwNGk1NGNmY25scg==" target="_blank" 
+   style="
+     position: fixed;
+     top: 5px;
+     right: 27px;
+     z-index: 999;
+     text-decoration: none;
+   ">
+  <h2 style="
+    color: #ff7043; 
+    margin: 0; 
+    font-size: 18px; 
+    transition: color 0.3s;
+  "
+  onmouseover="this.style.color='#ff5722'" 
+  onmouseout="this.style.color='#ff7043'">
+    Warung Lainnya
+  </h2>
+</a>
+<img src="https://i.ibb.co.com/KccY6t5Y/Properti-Sifood-20250507-215020-0000.jpg" alt="Ikan" 
+style="width:100%; height:100%; display:block; margin:auto;" />
 
   <div id="statusBar" class="status-bar">TUTUP</div>
   <div id="notif" class="notif"></div>
@@ -99,25 +147,32 @@
     <div class="card">
       <h3>Makanan</h3>
       <select id="foodSelect">
-        <option value="">Pilih Menu</option>
-        <option value="menu1-10000">Menu1 - 10.000</option>
-        <option value="menu2-11000">Menu2 - 11.000</option>
-      </select>
+       <option value="">Pilih Menu</option>
+        <option value="Ayam Geprek-20000">Ayam geprek - 20.000</option>
+        <option value="Pecel lele-17000">Pecel lele - 17.000</option>
+       <option value="Mie Pedas Telur-15000">Mie Pedas Telur - 15.000</option>
+
+    
+</select>
+
       <select id="foodExtra" multiple>
-        <option value="T1-3000">T1 - 3.000</option>
-        <option value="T2-4000">T2 - 4.000</option>
+        <option value="Pakai Nasi-5000">Pakai Nasi - 5.000</option>
+        <option value="Tanpa Nasi-0">Tanpa Nasi - 0</option> 
       </select>
+
       <select id="foodOption">
         <option value="">Pilih Opsi</option>
-        <option value="Dingin">Dingin</option>
-        <option value="Hangat">Hangat</option>
-        <option value="Kecil">Kecil</option>
+        <option value="Nasinya digabung">Nasinya digabung</option>
+
+        <option value="Nasinya dipisah">Nasinya dipisah</option>
+
       </select>
+
       <div class="qty-controls">
         <button onclick="updateQty('food', -1)">-</button>
         <span id="foodQty">1</span>
         <button onclick="updateQty('food', 1)">+</button>
-        <span>Subtotal: <span id="foodSubtotal">0</span></span>
+        <span id="foodSubtotal">0</span></span>
       </div>
       <textarea id="foodNote" placeholder="Catatan (opsional)"></textarea>
       <button class="btn-orange" onclick="addToCart('food')">Masukkan Keranjang</button>
@@ -128,23 +183,27 @@
       <h3>Minuman</h3>
       <select id="drinkSelect">
         <option value="">Pilih Menu</option>
-        <option value="menuA-10000">MenuA - 10.000</option>
-        <option value="menuB-11000">MenuB - 11.000</option>
+        <option value="Teh Hijau Original-5000">Teh Hijau Original - 5.000</option>
+        <option value="Teh Hijau Susu-6000">Teh Hijau Susu - 6.000</option>
+        <option value="Es Blend Merah Beludru-6000"Es Blend Merah Beludru - 15.000</option>
+        <option value=" Es Blend Coklat Sultan-6000"> Es Blend Coklat Sultan - 8.000</option>
+
       </select>
+
+
       <select id="drinkExtra" multiple>
-        <option value="TA-3000">TA - 3.000</option>
-        <option value="TB-4000">TB - 4.000</option>
+        <option value="Tanpa Extra-0">Tanpa Exra- 0</option>
       </select>
       <select id="drinkOption">
         <option value="">Pilih Opsi</option>
-        <option value="Hangat">Hangat</option>
-        <option value="Menengah">Menengah</option>
+        <option value="Dingin ">Dingin</option>
+
       </select>
       <div class="qty-controls">
         <button onclick="updateQty('drink', -1)">-</button>
         <span id="drinkQty">1</span>
         <button onclick="updateQty('drink', 1)">+</button>
-        <span>Subtotal: <span id="drinkSubtotal">0</span></span>
+        <span id="drinkSubtotal">0</span></span>
       </div>
       <textarea id="drinkNote" placeholder="Catatan (opsional)"></textarea>
       <button class="btn-orange" onclick="addToCart('drink')">Masukkan Keranjang</button>
@@ -156,19 +215,194 @@
     <h3>Keranjang</h3>
     <div id="cartList"></div>
     <div>Total Pesanan: <span id="cartTotal">0</span></div>
+
     <select id="lokasiAntar" onchange="updateOngkir()">
+
       <option value="">Pilih Lokasi Antar</option>
-      <option value="KM 9-6000">KM 9 - 6.000</option>
-      <option value="KM 8-6000">KM 8 - 6.000</option>
+
+      <option value="Kilometer.0 -15000">Kilometer-0 - 15.000</option>
+
+      <option value="Kilometer.1 -14000">Kilometer-1 - 14.000</option>
+
+      <option value="Kilometer.2 -12000">Kilometer-2 - 12.000</option>
+
+      <option value="Kilometer.3 -11000">Kilometer-3 - 11.000</option>
+
+      <option value="Kilometer.4 -10000">Kilometer-4 - 10.000</option>
+
+      <option value="Mapaddegat Bawah -10000">Mapaddegat Bawah - 10.000</option>
+
+       <option value="Kilometer.5 -8000">Kilometer-5 - 8.000</option>
+
+      <option value="Kilometer.6 -7000">Kilometer-6 - 7.000</option>
+
+      <option value="SP2 Setelah Perusda dst -8000">SP2 Setelah Perusda dst - 8.000</option>
+
+      <option value="Kilometer.7 -6000">Kilometer-7 - 6.000</option>
+
+      <option value="Kilometer.8 -6000">Kilometer-8 - 6.000</option>
+
+      <option value="Kilometer.9 -6000">Kilometer-9 - 6.000</option>
+
+      <option value="Kilometer.10 & SP3 Sekitarnya - 7000">Kilometer-10 & SP3 Sekitarnya - 7.000</option>
+
+
     </select>
     <div>Total + Ongkir: <span id="totalPlusOngkir">0</span></div>
-    <textarea id="alamatDetail" placeholder="Alamat lengkap: gang, rumah, gedung..."></textarea>
-    <button class="btn-orange" onclick="checkout()">====KIRIM PESANAN KE WHATSAPP ADMIN📤====Pastikan Chatmu terkirim ke Admin yah</button>
-  </div>
-
+    <textarea id="alamatDetail" class="alamat-detail" placeholder="detail alamat wajib di isi..."></textarea>
+    <button class="btn-kirim" onclick="checkout()">
+  KIRIM ORDERAN KE WHATSAPP ADMIN
+</button>
   <script>
-    // JavaScript bagian sama seperti yang telah Anda berikan
+    let cart = [];
+    let ongkir = 0;
+    const prices = {"Tanpa Nasi": 0, "Pakai Nasi": 5000,};
+
+    function showNotif(msg) {
+      const el = document.getElementById("notif");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 3000);
+    }
+
+    function updateStatus() {
+      const jam = new Date().getHours();
+      const buka = (jam >= 0 && jam < 24);
+      const statusEl = document.getElementById("statusBar");
+      statusEl.textContent = buka ? "BUKA" : "TUTUP";
+      statusEl.style.background = buka ? "green" : "#dc3545";
+
+      const semuaTombol = document.querySelectorAll("button");
+      semuaTombol.forEach(btn => {
+        btn.disabled = !buka;
+        btn.style.opacity = buka ? "1" : "0.5";
+        btn.style.cursor = buka ? "pointer" : "not-allowed";
+      });
+    }
+
+    function updateQty(type, delta) {
+      const qtyEl = document.getElementById(`${type}Qty`);
+      let qty = parseInt(qtyEl.textContent) + delta;
+      qty = Math.max(1, qty);
+      qtyEl.textContent = qty;
+      updateSubtotal(type);
+    }
+
+    function updateSubtotal(type) {
+      const select = document.getElementById(`${type}Select`).value;
+      if (!select) return;
+      const [_, price] = select.split("-");
+      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
+      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
+      let totalExtra = extras.reduce((sum, ex) => sum + (prices[ex] || 0), 0);
+      const subtotal = (parseInt(price) + totalExtra) * qty;
+      document.getElementById(`${type}Subtotal`).textContent = subtotal;
+    }
+
+    document.querySelectorAll("select").forEach(el => el.addEventListener("change", () => {
+      if (el.id.includes("Select") || el.id.includes("Extra")) {
+        const type = el.id.includes("food") ? "food" : "drink";
+        updateSubtotal(type);
+      }
+    }));
+
+    function addToCart(type) {
+      const select = document.getElementById(`${type}Select`).value;
+      const option = document.getElementById(`${type}Option`).value;
+      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
+      if (!select) return showNotif("Pilih menu terlebih dahulu.");
+      if (extras.length === 0) return showNotif("Pilih minimal satu extra.");
+      if (!option) return showNotif("Pilih Salah satu Opsi.");
+
+      const [name, price] = select.split("-");
+      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
+      const note = document.getElementById(`${type}Note`).value;
+      const extraTotal = extras.reduce((sum, code) => sum + (prices[code] || 0), 0);
+      const subtotal = (parseInt(price) + extraTotal) * qty;
+
+      const exists = cart.some(item =>
+        item.name === name && item.option === option &&
+        item.extras.length === extras.length &&
+        item.extras.every((v, i) => v === extras[i])
+      );
+      if (exists) return showNotif("Item sudah ada di keranjang.");
+
+      cart.push({ name, qty, option, extras, note, subtotal });
+      showNotif("Berhasil ditambahkan ke keranjang.");
+      renderCart();
+    }
+
+    function renderCart() {
+      const list = document.getElementById("cartList");
+      list.innerHTML = "";
+      let total = 0;
+      cart.forEach((item, i) => {
+        total += item.subtotal;
+        list.innerHTML += `
+          <div class="cart-item">
+            ${item.name} (${item.qty}x) - ${item.subtotal}<br>
+            Opsi: ${item.option}<br>
+            Extra: ${item.extras.join(", ")}<br>
+            Catatan: ${item.note}<br>
+            <button onclick="removeCart(${i})">Hapus</button>
+          </div>
+        `;
+      });
+      document.getElementById("cartTotal").textContent = total;
+      updateTotalOngkir();
+    }
+
+    function removeCart(i) {
+      cart.splice(i, 1);
+      renderCart();
+    }
+
+    function updateOngkir() {
+      const val = document.getElementById("lokasiAntar").value;
+      if (!val) return;
+      const [_, biaya] = val.split("-");
+      ongkir = parseInt(biaya);
+      updateTotalOngkir();
+    }
+
+    function updateTotalOngkir() {
+      const total = parseInt(document.getElementById("cartTotal").textContent);
+      document.getElementById("totalPlusOngkir").textContent = total + ongkir;
+    }
+
+    function checkout() {
+      const lokasi = document.getElementById("lokasiAntar").value;
+      const alamat = document.getElementById("alamatDetail").value.trim();
+      if (!cart.length) return showNotif("Keranjang kosong.");
+      if (!lokasi) return showNotif("Pilih lokasi antar.");
+      if (!alamat) return showNotif("Isi alamat.");
+
+      const waktu = new Date().toLocaleString("id-ID");
+      let msg = `*Halo Admin.... Tolong proses Orderan Saya di DAPOER WAWA*%0A Waktu: ${waktu}%0A%0A`;
+
+      cart.forEach((item, i) => {
+        msg += `${i+1}. ${item.name}%0A`;
+        msg += `Qty: ${item.qty}%0A`;
+        if (item.option) msg += `Opsi: ${item.option}%0A`;
+        if (item.extras.length) msg += `Extra: ${item.extras.join(", ")}%0A`;
+        if (item.note) msg += `Catatan: ${item.note}%0A`;
+        msg += `Subtotal: ${item.subtotal.toLocaleString("id-ID")}%0A%0A`;
+      });
+
+      msg += `-----------------------------%0A`;
+      const total = parseInt(document.getElementById("cartTotal").textContent);
+      const lokasiTxt = lokasi.split("-")[0];
+      msg += `Total: ${total.toLocaleString("id-ID")}%0A`;
+      msg += `Ongkir (${lokasiTxt}): ${ongkir.toLocaleString("id-ID")}%0A`;
+      msg += `*Total Bayar: ${(total + ongkir).toLocaleString("id-ID")}*%0A%0A`;
+      msg += `*Detail Alamat: ${alamat}*`;
+
+      const waLink = `https://wa.me/6285266610522?text=${msg}`;
+      window.open(waLink, '_blank');
+    }
+
+    updateStatus();
+    setInterval(updateStatus, 60000);
   </script>
 </body>
 </html>
-
