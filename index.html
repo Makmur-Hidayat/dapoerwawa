@@ -227,118 +227,212 @@ style="width:100%; height:100%; display:block; margin:auto;" />
   </div>
 
   <!-- Keranjang -->
+  <div class="qty-controls">
+        <button onclick="updateQty('drink', -1)">-</button>
+        <span id="drinkQty">1</span>
+        <button onclick="updateQty('drink', 1)">+</button>
+        <span id="drinkSubtotal">0</span></span>
+      </div>
+      <textarea id="drinkNote" placeholder="Catatan (opsional)"></textarea>
+      <button class="btn-orange" onclick="addToCart('drink')">Masukkan Keranjang</button>
+    </div>
+  </div>
+
+  <!-- Keranjang -->
   <div class="cart">
     <h3>Keranjang</h3>
     <div id="cartList"></div>
     <div>Total Pesanan: <span id="cartTotal">0</span></div>
 
     <select id="lokasiAntar" onchange="updateOngkir()">
+
       <option value="">Pilih Lokasi Antar</option>
+
       <option value="Kilometer.0 -15000">Kilometer-0 - 15.000</option>
+
       <option value="Kilometer.1 -14000">Kilometer-1 - 14.000</option>
+
       <option value="Kilometer.2 -12000">Kilometer-2 - 12.000</option>
+
       <option value="Kilometer.3 -11000">Kilometer-3 - 11.000</option>
+
       <option value="Kilometer.4 -10000">Kilometer-4 - 10.000</option>
-      <option value="Kilometer.5 -8000">Kilometer-5 - 8.000</option>
+
+      <option value="Mapaddegat Bawah -10000">Mapaddegat Bawah - 10.000</option>
+
+       <option value="Kilometer.5 -8000">Kilometer-5 - 8.000</option>
+
       <option value="Kilometer.6 -7000">Kilometer-6 - 7.000</option>
+
+      <option value="SP2 Setelah Perusda dst -8000">SP2 Setelah Perusda dst - 8.000</option>
+
       <option value="Kilometer.7 -6000">Kilometer-7 - 6.000</option>
+
       <option value="Kilometer.8 -6000">Kilometer-8 - 6.000</option>
+
       <option value="Kilometer.9 -6000">Kilometer-9 - 6.000</option>
-      <option value="Kilometer.10 & SP3 Sekitarnya -7000">Kilometer-10 & SP3 Sekitarnya - 7.000</option>
+
+      <option value="Kilometer.10 & SP3 Sekitarnya - 7000">Kilometer-10 & SP3 Sekitarnya - 7.000</option>
+
+
     </select>
     <div>Total + Ongkir: <span id="totalPlusOngkir">0</span></div>
     <textarea id="alamatDetail" class="alamat-detail" placeholder="detail alamat wajib di isi..."></textarea>
-    <button class="btn-kirim" onclick="checkout()">KIRIM ORDERAN KE WHATSAPP ADMIN</button>
-  </div>
-
+    <button class="btn-kirim" onclick="checkout()">
+  KIRIM ORDERAN KE WHATSAPP ADMIN
+</button>
   <script>
-    // Script JavaScript yang diperlukan untuk menjalankan fitur checkout dan pemesanan
-    let foodQty = 1;
-    let drinkQty = 1;
     let cart = [];
-    let statusOpen = true;
+    let ongkir = 0;
+    const prices = {"Tanpa Nasi": 0, "Pakai Nasi": 5000,};
 
-    document.getElementById('statusBar').innerHTML = statusOpen ? 'BUKA' : 'TUTUP';
-    setInterval(() => {
-      statusOpen = !statusOpen;
-      document.getElementById('statusBar').innerHTML = statusOpen ? 'BUKA' : 'TUTUP';
-      disableButtons(statusOpen);
-    }, 60000);  // Perbarui status buka/tutup setiap menit
-
-    function disableButtons(status) {
-      const buttons = document.querySelectorAll('.btn-orange');
-      buttons.forEach(button => button.disabled = !status);
+    function showNotif(msg) {
+      const el = document.getElementById("notif");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 3000);
     }
 
-    function updateQty(type, change) {
-      if (type === 'food') {
-        foodQty += change;
-        if (foodQty < 1) foodQty = 1;
-        document.getElementById('foodQty').textContent = foodQty;
-      } else {
-        drinkQty += change;
-        if (drinkQty < 1) drinkQty = 1;
-        document.getElementById('drinkQty').textContent = drinkQty;
+    function updateStatus() {
+      const jam = new Date().getHours();
+      const buka = (jam >= 11 && jam < 24);
+      const statusEl = document.getElementById("statusBar");
+      statusEl.textContent = buka ? "BUKA" : "TUTUP";
+      statusEl.style.background = buka ? "green" : "#dc3545";
+
+      const semuaTombol = document.querySelectorAll("button");
+      semuaTombol.forEach(btn => {
+        btn.disabled = !buka;
+        btn.style.opacity = buka ? "1" : "0.5";
+        btn.style.cursor = buka ? "pointer" : "not-allowed";
+      });
+    }
+
+    function updateQty(type, delta) {
+      const qtyEl = document.getElementById(`${type}Qty`);
+      let qty = parseInt(qtyEl.textContent) + delta;
+      qty = Math.max(1, qty);
+      qtyEl.textContent = qty;
+      updateSubtotal(type);
+    }
+
+    function updateSubtotal(type) {
+      const select = document.getElementById(`${type}Select`).value;
+      if (!select) return;
+      const [_, price] = select.split("-");
+      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
+      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
+      let totalExtra = extras.reduce((sum, ex) => sum + (prices[ex] || 0), 0);
+      const subtotal = (parseInt(price) + totalExtra) * qty;
+      document.getElementById(`${type}Subtotal`).textContent = subtotal;
+    }
+
+    document.querySelectorAll("select").forEach(el => el.addEventListener("change", () => {
+      if (el.id.includes("Select") || el.id.includes("Extra")) {
+        const type = el.id.includes("food") ? "food" : "drink";
+        updateSubtotal(type);
       }
-    }
+    }));
 
     function addToCart(type) {
-      let selectedItem, qty, note;
-      if (type === 'food') {
-        selectedItem = document.getElementById('foodSelect').value;
-        qty = foodQty;
-        note = document.getElementById('foodNote').value;
-      } else {
-        selectedItem = document.getElementById('drinkSelect').value;
-        qty = drinkQty;
-        note = document.getElementById('drinkNote').value;
-      }
+      const select = document.getElementById(`${type}Select`).value;
+      const option = document.getElementById(`${type}Option`).value;
+      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
+      if (!select) return showNotif("Pilih menu terlebih dahulu.");
+      if (extras.length === 0) return showNotif("Pilih minimal satu extra.");
+      if (!option) return showNotif("Pilih Salah satu Opsi.");
 
-      if (selectedItem) {
-        cart.push({item: selectedItem, qty, note});
-        updateCart();
-      }
+      const [name, price] = select.split("-");
+      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
+      const note = document.getElementById(`${type}Note`).value;
+      const extraTotal = extras.reduce((sum, code) => sum + (prices[code] || 0), 0);
+      const subtotal = (parseInt(price) + extraTotal) * qty;
+
+      const exists = cart.some(item =>
+        item.name === name && item.option === option &&
+        item.extras.length === extras.length &&
+        item.extras.every((v, i) => v === extras[i])
+      );
+      if (exists) return showNotif("Item sudah ada di keranjang.");
+
+      cart.push({ name, qty, option, extras, note, subtotal });
+      showNotif("Berhasil ditambahkan ke keranjang.");
+      renderCart();
     }
 
-    function updateCart() {
-      const cartList = document.getElementById('cartList');
-      cartList.innerHTML = '';
+    function renderCart() {
+      const list = document.getElementById("cartList");
+      list.innerHTML = "";
       let total = 0;
-
-      cart.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.textContent = `${item.item} x ${item.qty} (${item.note})`;
-        cartList.appendChild(div);
-        total += parseInt(item.item.split('-')[1]);
+      cart.forEach((item, i) => {
+        total += item.subtotal;
+        list.innerHTML += `
+          <div class="cart-item">
+            ${item.name} (${item.qty}x) - ${item.subtotal}<br>
+            Extra: ${item.extras.join(", ")}<br>
+            Opsi: ${item.option}<br>
+            Catatan: ${item.note}<br>
+            <button onclick="removeCart(${i})">Hapus</button>
+          </div>
+        `;
       });
-
-      document.getElementById('cartTotal').textContent = total;
+      document.getElementById("cartTotal").textContent = total;
+      updateTotalOngkir();
     }
 
-    function checkout() {
-      const alamat = document.getElementById('alamatDetail').value;
-      if (!alamat) {
-        alert("Harap isi alamat!");
-        return;
-      }
-
-      let pesan = `Orderan:\n`;
-      cart.forEach(item => {
-        pesan += `${item.item} x ${item.qty} (${item.note})\n`;
-      });
-
-      pesan += `Alamat: ${alamat}\nTotal: ${document.getElementById('cartTotal').textContent}`;
-      window.open(`https://wa.me/1234567890?text=${encodeURIComponent(pesan)}`, '_blank');
+    function removeCart(i) {
+      cart.splice(i, 1);
+      renderCart();
     }
 
     function updateOngkir() {
-      const ongkirSelect = document.getElementById('lokasiAntar');
-      const ongkir = parseInt(ongkirSelect.value.split('-')[1]);
-      const total = parseInt(document.getElementById('cartTotal').textContent);
-      const totalPlusOngkir = total + ongkir;
-      document.getElementById('totalPlusOngkir').textContent = totalPlusOngkir;
+      const val = document.getElementById("lokasiAntar").value;
+      if (!val) return;
+      const [_, biaya] = val.split("-");
+      ongkir = parseInt(biaya);
+      updateTotalOngkir();
     }
+
+    function updateTotalOngkir() {
+      const total = parseInt(document.getElementById("cartTotal").textContent);
+      document.getElementById("totalPlusOngkir").textContent = total + ongkir;
+    }
+
+    function checkout() {
+      const lokasi = document.getElementById("lokasiAntar").value;
+      const alamat = document.getElementById("alamatDetail").value.trim();
+      if (!cart.length) return showNotif("Keranjang kosong.");
+      if (!lokasi) return showNotif("Pilih lokasi antar.");
+      if (!alamat) return showNotif("Isi alamat.");
+
+      const waktu = new Date().toLocaleString("id-ID");
+      let msg = `*Halo Admin.... Tolong proses Orderan Saya di DAPOER WAWA*%0A Waktu: ${waktu}%0A%0A`;
+
+      cart.forEach((item, i) => {
+        msg += `${i+1}. ${item.name}%0A`;
+        msg += `Qty: ${item.qty}%0A`;
+        if (item.extras.length) msg += `Extra: ${item.extras.join(", ")}%0A`;
+        if (item.option) msg += `Opsi: ${item.option}%0A`;
+        if (item.note) msg += `Catatan: ${item.note}%0A`;
+        msg += `Subtotal: ${item.subtotal.toLocaleString("id-ID")}%0A%0A`;
+      });
+
+      msg += `-----------------------------%0A`;
+      const total = parseInt(document.getElementById("cartTotal").textContent);
+      const lokasiTxt = lokasi.split("-")[0];
+      msg += `Total: ${total.toLocaleString("id-ID")}%0A`;
+      msg += `Ongkir (${lokasiTxt}): ${ongkir.toLocaleString("id-ID")}%0A`;
+      msg += `*Total Bayar: ${(total + ongkir).toLocaleString("id-ID")}*%0A%0A`;
+      msg += `*Detail Alamat: ${alamat}*`;
+      msg += `------------------------------%0A`;
+      msg += `Terima Kasih Telah Belanja di  Sifood. Mau Belanja di Warung Lainnya? klik: https://makmur-hidayat.github.io/Sifood-Home/ . Stanbay Hapenya yah, Kurir Akan Hubungi Kamu`;
+
+      const waLink = `https://wa.me/6285266610522?text=${msg}`;
+      window.open(waLink, '_blank');
+    }
+
+    updateStatus();
+    setInterval(updateStatus, 60000);
   </script>
 </body>
 </html>
