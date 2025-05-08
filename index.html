@@ -267,7 +267,7 @@ style="width:100%; height:100%; display:block; margin:auto;" />
 
     function updateStatus() {
       const jam = new Date().getHours();
-      const buka = (jam >= 0 && jam < 24);
+      const buka = (jam >= 12 && jam < 21);
       const statusEl = document.getElementById("statusBar");
       statusEl.textContent = buka ? "BUKA" : "TUTUP";
       statusEl.style.background = buka ? "green" : "#dc3545";
@@ -397,7 +397,7 @@ style="width:100%; height:100%; display:block; margin:auto;" />
       msg += `*Total Bayar: ${(total + ongkir).toLocaleString("id-ID")}*%0A%0A`;
       msg += `*Detail Alamat: ${alamat}*`;
       msg += `------------------------------%0A`;
-      msg += `Terima Kasih Telah Belanja di  Sifood. link Toko DAPOER WAWA https://makmur-hidayat.github.io/DAPOER-WAWA/ . Stanbay Hapenya yah, Kurir Akan Hubungi Kamu`;
+      msg += `Terima Kasih Telah Belanja di  Sifood. Mau Belanja di Warung Lainnya? klik: https://makmur-hidayat.github.io/Sifood-Home/ . Stanbay Hapenya yah, Kurir Akan Hubungi Kamu`;
 
       const waLink = `https://wa.me/6285266610522?text=${msg}`;
       window.open(waLink, '_blank');
