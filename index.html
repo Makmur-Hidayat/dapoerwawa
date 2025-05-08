@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,11 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DAPOER WAWA</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: sans-serif;
       padding: 20px;
       background: #f4f4f4;
+      margin: 0;
     }
+
     .status-bar {
       text-align: center;
       font-weight: bold;
@@ -20,32 +24,34 @@
       background: #dc3545;
       margin-bottom: 20px;
     }
-    .container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  justify-content: center;
-}
 
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  flex: 1 1 150px;
-  max-width: 150px;
-  box-sizing: border-box;
-}
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Dua kolom untuk semua perangkat */
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
     select, textarea {
       width: 100%;
       margin: 8px 0;
       padding: 6px;
+      font-size: 16px;
     }
+
     .qty-controls {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .qty-controls button {
       background: #ff7043;
       color: white;
@@ -55,9 +61,11 @@
       font-size: 18px;
       border-radius: 4px;
     }
+
     .cart {
       margin-top: 30px;
     }
+
     .cart-item {
       background: white;
       padding: 10px;
@@ -65,6 +73,7 @@
       border-radius: 6px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
+
     .btn-orange {
       background: #ff7043;
       color: white;
@@ -73,9 +82,11 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
     .btn-orange:hover {
       background: #e05c35;
     }
+
     .notif {
       position: fixed;
       top: 20px;
@@ -88,32 +99,44 @@
       transition: opacity 0.5s ease-in-out;
       z-index: 999;
     }
+
     .notif.show {
       opacity: 1;
     }
+
     .btn-kirim {
-  background: #ff7043; /* warna hijau WhatsApp */
-  color: ff7043;
-  font-weight: bold;
-  padding: 16px 24px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 15px;
-}
-.btn-kirim:hover {
-  background: white;
-}
-.alamat-detail {
-  width: 100%;
-  height: 2cm; /* sekitar 1.5 kali dari tinggi select default */
-  margin-top: 8px;
-  padding: 6px;
-  box-sizing: border-box;
-  resize: vertical;
-}
+      background: #ff7043;
+      color: white;
+      font-weight: bold;
+      padding: 16px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .btn-kirim:hover {
+      background: white;
+    }
+
+    .alamat-detail {
+      width: 100%;
+      height: 2cm;
+      margin-top: 8px;
+      padding: 6px;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+
+    /* Responsif gambar */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: auto;
+    }
   </style>
 </head>
 <body>
@@ -147,13 +170,11 @@ style="width:100%; height:100%; display:block; margin:auto;" />
     <div class="card">
       <h3>Makanan</h3>
       <select id="foodSelect">
-       <option value="">Pilih Menu</option>
+        <option value="">Pilih Menu</option>
         <option value="Ayam Geprek-20000">Ayam geprek - 20.000</option>
         <option value="Pecel lele-17000">Pecel lele - 17.000</option>
-       <option value="Mie Pedas Telur-15000">Mie Pedas Telur - 15.000</option>
-
-    
-</select>
+        <option value="Mie Pedas Telur-15000">Mie Pedas Telur - 15.000</option>
+      </select>
 
       <select id="foodExtra" multiple>
         <option value="Pakai Nasi-5000">Pakai Nasi - 5.000</option>
@@ -163,9 +184,7 @@ style="width:100%; height:100%; display:block; margin:auto;" />
       <select id="foodOption">
         <option value="">Pilih Opsi</option>
         <option value="Nasinya digabung">Nasinya digabung</option>
-
         <option value="Nasinya dipisah">Nasinya dipisah</option>
-
       </select>
 
       <div class="qty-controls">
@@ -185,19 +204,16 @@ style="width:100%; height:100%; display:block; margin:auto;" />
         <option value="">Pilih Menu</option>
         <option value="Teh Hijau Original-5000">Teh Hijau Original - 5.000</option>
         <option value="Teh Hijau Susu-6000">Teh Hijau Susu - 6.000</option>
-        <option value="Es Blend Merah Beludru-6000"Es Blend Merah Beludru - 15.000</option>
-        <option value=" Es Blend Coklat Sultan-6000"> Es Blend Coklat Sultan - 8.000</option>
-
+        <option value="Es Blend Merah Beludru-6000">Es Blend Merah Beludru - 6.000</option>
+        <option value="Es Blend Coklat Sultan-6000">Es Blend Coklat Sultan - 6.000</option>
       </select>
 
-
       <select id="drinkExtra" multiple>
-        <option value="Tanpa Extra-0">Tanpa Exra- 0</option>
+        <option value="Tanpa Extra-0">Tanpa Extra- 0</option>
       </select>
       <select id="drinkOption">
         <option value="">Pilih Opsi</option>
-        <option value="Dingin ">Dingin</option>
-
+        <option value="Dingin">Dingin</option>
       </select>
       <div class="qty-controls">
         <button onclick="updateQty('drink', -1)">-</button>
@@ -217,194 +233,112 @@ style="width:100%; height:100%; display:block; margin:auto;" />
     <div>Total Pesanan: <span id="cartTotal">0</span></div>
 
     <select id="lokasiAntar" onchange="updateOngkir()">
-
       <option value="">Pilih Lokasi Antar</option>
-
       <option value="Kilometer.0 -15000">Kilometer-0 - 15.000</option>
-
       <option value="Kilometer.1 -14000">Kilometer-1 - 14.000</option>
-
       <option value="Kilometer.2 -12000">Kilometer-2 - 12.000</option>
-
       <option value="Kilometer.3 -11000">Kilometer-3 - 11.000</option>
-
       <option value="Kilometer.4 -10000">Kilometer-4 - 10.000</option>
-
-      <option value="Mapaddegat Bawah -10000">Mapaddegat Bawah - 10.000</option>
-
-       <option value="Kilometer.5 -8000">Kilometer-5 - 8.000</option>
-
+      <option value="Kilometer.5 -8000">Kilometer-5 - 8.000</option>
       <option value="Kilometer.6 -7000">Kilometer-6 - 7.000</option>
-
-      <option value="SP2 Setelah Perusda dst -8000">SP2 Setelah Perusda dst - 8.000</option>
-
       <option value="Kilometer.7 -6000">Kilometer-7 - 6.000</option>
-
       <option value="Kilometer.8 -6000">Kilometer-8 - 6.000</option>
-
       <option value="Kilometer.9 -6000">Kilometer-9 - 6.000</option>
-
-      <option value="Kilometer.10 & SP3 Sekitarnya - 7000">Kilometer-10 & SP3 Sekitarnya - 7.000</option>
-
-
+      <option value="Kilometer.10 & SP3 Sekitarnya -7000">Kilometer-10 & SP3 Sekitarnya - 7.000</option>
     </select>
     <div>Total + Ongkir: <span id="totalPlusOngkir">0</span></div>
     <textarea id="alamatDetail" class="alamat-detail" placeholder="detail alamat wajib di isi..."></textarea>
-    <button class="btn-kirim" onclick="checkout()">
-  KIRIM ORDERAN KE WHATSAPP ADMIN
-</button>
+    <button class="btn-kirim" onclick="checkout()">KIRIM ORDERAN KE WHATSAPP ADMIN</button>
+  </div>
+
   <script>
+    // Script JavaScript yang diperlukan untuk menjalankan fitur checkout dan pemesanan
+    let foodQty = 1;
+    let drinkQty = 1;
     let cart = [];
-    let ongkir = 0;
-    const prices = {"Tanpa Nasi": 0, "Pakai Nasi": 5000,};
+    let statusOpen = true;
 
-    function showNotif(msg) {
-      const el = document.getElementById("notif");
-      el.textContent = msg;
-      el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 3000);
+    document.getElementById('statusBar').innerHTML = statusOpen ? 'BUKA' : 'TUTUP';
+    setInterval(() => {
+      statusOpen = !statusOpen;
+      document.getElementById('statusBar').innerHTML = statusOpen ? 'BUKA' : 'TUTUP';
+      disableButtons(statusOpen);
+    }, 60000);  // Perbarui status buka/tutup setiap menit
+
+    function disableButtons(status) {
+      const buttons = document.querySelectorAll('.btn-orange');
+      buttons.forEach(button => button.disabled = !status);
     }
 
-    function updateStatus() {
-      const jam = new Date().getHours();
-      const buka = (jam >= 12 && jam < 21);
-      const statusEl = document.getElementById("statusBar");
-      statusEl.textContent = buka ? "BUKA" : "TUTUP";
-      statusEl.style.background = buka ? "green" : "#dc3545";
-
-      const semuaTombol = document.querySelectorAll("button");
-      semuaTombol.forEach(btn => {
-        btn.disabled = !buka;
-        btn.style.opacity = buka ? "1" : "0.5";
-        btn.style.cursor = buka ? "pointer" : "not-allowed";
-      });
-    }
-
-    function updateQty(type, delta) {
-      const qtyEl = document.getElementById(`${type}Qty`);
-      let qty = parseInt(qtyEl.textContent) + delta;
-      qty = Math.max(1, qty);
-      qtyEl.textContent = qty;
-      updateSubtotal(type);
-    }
-
-    function updateSubtotal(type) {
-      const select = document.getElementById(`${type}Select`).value;
-      if (!select) return;
-      const [_, price] = select.split("-");
-      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
-      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
-      let totalExtra = extras.reduce((sum, ex) => sum + (prices[ex] || 0), 0);
-      const subtotal = (parseInt(price) + totalExtra) * qty;
-      document.getElementById(`${type}Subtotal`).textContent = subtotal;
-    }
-
-    document.querySelectorAll("select").forEach(el => el.addEventListener("change", () => {
-      if (el.id.includes("Select") || el.id.includes("Extra")) {
-        const type = el.id.includes("food") ? "food" : "drink";
-        updateSubtotal(type);
+    function updateQty(type, change) {
+      if (type === 'food') {
+        foodQty += change;
+        if (foodQty < 1) foodQty = 1;
+        document.getElementById('foodQty').textContent = foodQty;
+      } else {
+        drinkQty += change;
+        if (drinkQty < 1) drinkQty = 1;
+        document.getElementById('drinkQty').textContent = drinkQty;
       }
-    }));
+    }
 
     function addToCart(type) {
-      const select = document.getElementById(`${type}Select`).value;
-      const option = document.getElementById(`${type}Option`).value;
-      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
-      if (!select) return showNotif("Pilih menu terlebih dahulu.");
-      if (extras.length === 0) return showNotif("Pilih minimal satu extra.");
-      if (!option) return showNotif("Pilih Salah satu Opsi.");
+      let selectedItem, qty, note;
+      if (type === 'food') {
+        selectedItem = document.getElementById('foodSelect').value;
+        qty = foodQty;
+        note = document.getElementById('foodNote').value;
+      } else {
+        selectedItem = document.getElementById('drinkSelect').value;
+        qty = drinkQty;
+        note = document.getElementById('drinkNote').value;
+      }
 
-      const [name, price] = select.split("-");
-      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
-      const note = document.getElementById(`${type}Note`).value;
-      const extraTotal = extras.reduce((sum, code) => sum + (prices[code] || 0), 0);
-      const subtotal = (parseInt(price) + extraTotal) * qty;
-
-      const exists = cart.some(item =>
-        item.name === name && item.option === option &&
-        item.extras.length === extras.length &&
-        item.extras.every((v, i) => v === extras[i])
-      );
-      if (exists) return showNotif("Item sudah ada di keranjang.");
-
-      cart.push({ name, qty, option, extras, note, subtotal });
-      showNotif("Berhasil ditambahkan ke keranjang.");
-      renderCart();
+      if (selectedItem) {
+        cart.push({item: selectedItem, qty, note});
+        updateCart();
+      }
     }
 
-    function renderCart() {
-      const list = document.getElementById("cartList");
-      list.innerHTML = "";
+    function updateCart() {
+      const cartList = document.getElementById('cartList');
+      cartList.innerHTML = '';
       let total = 0;
-      cart.forEach((item, i) => {
-        total += item.subtotal;
-        list.innerHTML += `
-          <div class="cart-item">
-            ${item.name} (${item.qty}x) - ${item.subtotal}<br>
-            Extra: ${item.extras.join(", ")}<br>
-            Opsi: ${item.option}<br>
-            Catatan: ${item.note}<br>
-            <button onclick="removeCart(${i})">Hapus</button>
-          </div>
-        `;
+
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.textContent = `${item.item} x ${item.qty} (${item.note})`;
+        cartList.appendChild(div);
+        total += parseInt(item.item.split('-')[1]);
       });
-      document.getElementById("cartTotal").textContent = total;
-      updateTotalOngkir();
-    }
 
-    function removeCart(i) {
-      cart.splice(i, 1);
-      renderCart();
-    }
-
-    function updateOngkir() {
-      const val = document.getElementById("lokasiAntar").value;
-      if (!val) return;
-      const [_, biaya] = val.split("-");
-      ongkir = parseInt(biaya);
-      updateTotalOngkir();
-    }
-
-    function updateTotalOngkir() {
-      const total = parseInt(document.getElementById("cartTotal").textContent);
-      document.getElementById("totalPlusOngkir").textContent = total + ongkir;
+      document.getElementById('cartTotal').textContent = total;
     }
 
     function checkout() {
-      const lokasi = document.getElementById("lokasiAntar").value;
-      const alamat = document.getElementById("alamatDetail").value.trim();
-      if (!cart.length) return showNotif("Keranjang kosong.");
-      if (!lokasi) return showNotif("Pilih lokasi antar.");
-      if (!alamat) return showNotif("Isi alamat.");
+      const alamat = document.getElementById('alamatDetail').value;
+      if (!alamat) {
+        alert("Harap isi alamat!");
+        return;
+      }
 
-      const waktu = new Date().toLocaleString("id-ID");
-      let msg = `*Halo Admin.... Tolong proses Orderan Saya di DAPOER WAWA*%0A Waktu: ${waktu}%0A%0A`;
-
-      cart.forEach((item, i) => {
-        msg += `${i+1}. ${item.name}%0A`;
-        msg += `Qty: ${item.qty}%0A`;
-        if (item.extras.length) msg += `Extra: ${item.extras.join(", ")}%0A`;
-        if (item.option) msg += `Opsi: ${item.option}%0A`
-        if (item.note) msg += `Catatan: ${item.note}%0A`;
-        msg += `Subtotal: ${item.subtotal.toLocaleString("id-ID")}%0A%0A`;
+      let pesan = `Orderan:\n`;
+      cart.forEach(item => {
+        pesan += `${item.item} x ${item.qty} (${item.note})\n`;
       });
 
-      msg += `-----------------------------%0A`;
-      const total = parseInt(document.getElementById("cartTotal").textContent);
-      const lokasiTxt = lokasi.split("-")[0];
-      msg += `Total: ${total.toLocaleString("id-ID")}%0A`;
-      msg += `Ongkir (${lokasiTxt}): ${ongkir.toLocaleString("id-ID")}%0A`;
-      msg += `*Total Bayar: ${(total + ongkir).toLocaleString("id-ID")}*%0A%0A`;
-      msg += `*Detail Alamat: ${alamat}*`;
-      msg += `------------------------------%0A`;
-      msg += `Terima Kasih Telah Belanja di  Sifood. Mau Belanja di Warung Lainnya? klik: https://makmur-hidayat.github.io/Sifood-Home/ . Stanbay Hapenya yah, Kurir Akan Hubungi Kamu`;
-
-      const waLink = `https://wa.me/6285266610522?text=${msg}`;
-      window.open(waLink, '_blank');
+      pesan += `Alamat: ${alamat}\nTotal: ${document.getElementById('cartTotal').textContent}`;
+      window.open(`https://wa.me/1234567890?text=${encodeURIComponent(pesan)}`, '_blank');
     }
 
-    updateStatus();
-    setInterval(updateStatus, 60000);
+    function updateOngkir() {
+      const ongkirSelect = document.getElementById('lokasiAntar');
+      const ongkir = parseInt(ongkirSelect.value.split('-')[1]);
+      const total = parseInt(document.getElementById('cartTotal').textContent);
+      const totalPlusOngkir = total + ongkir;
+      document.getElementById('totalPlusOngkir').textContent = totalPlusOngkir;
+    }
   </script>
 </body>
 </html>
