@@ -1,404 +1,283 @@
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DAPOER WAWA</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-    .status-bar {
-      text-align: center;
-      font-weight: bold;
-      padding: 10px;
-      color: white;
-      background: #dc3545;
-      margin-bottom: 20px;
-    }
-    .container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  justify-content: center;
-}
-
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  flex: 1 1 150px;
-  max-width: 150px;
-  box-sizing: border-box;
-}
-    select, textarea {
-      width: 100%;
-      margin: 8px 0;
-      padding: 6px;
-    }
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .qty-controls button {
-      background: #ff7043;
-      color: white;
-      border: none;
-      width: 30px;
-      height: 30px;
-      font-size: 18px;
-      border-radius: 4px;
-    }
-    .cart {
-      margin-top: 30px;
-    }
-    .cart-item {
-      background: white;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
-    .btn-orange {
-      background: #ff7043;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .btn-orange:hover {
-      background: #e05c35;
-    }
+    .blurred { filter: blur(2px); pointer-events: none; opacity: 0.5; }
+    .blink { animation: blink-animation 1s steps(2, start) infinite; }
+    @keyframes blink-animation { to { visibility: hidden; } }
     .notif {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background: red;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ff7043;
       color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-      z-index: 999;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      z-index: 50;
     }
-    .notif.show {
-      opacity: 1;
-    }
-    .btn-kirim {
-  background: #ff7043; /* warna hijau WhatsApp */
-  color: ff7043;
-  font-weight: bold;
-  padding: 16px 24px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 15px;
-}
-.btn-kirim:hover {
-  background: white;
-}
-.alamat-detail {
-  width: 100%;
-  height: 2cm; /* sekitar 1.5 kali dari tinggi select default */
-  margin-top: 8px;
-  padding: 6px;
-  box-sizing: border-box;
-  resize: vertical;
-}
   </style>
 </head>
-<body>
-<a href="https://makmur-hidayat.github.io/Sifood-Home/" target="_blank" 
-   style="
-     position: fixed;
-     top: 5px;
-     right: 27px;
-     z-index: 999;
-     text-decoration: none;
-   ">
-  <h2 style="
-    color: #ff7043; 
-    margin: 0; 
-    font-size: 18px; 
-    transition: color 0.3s;
-  "
-  onmouseover="this.style.color='#ff5722'" 
-  onmouseout="this.style.color='#ff7043'">
-    Warung Lainnya
-  </h2>
-</a>
-<img src="https://i.ibb.co.com/KccY6t5Y/Properti-Sifood-20250507-215020-0000.jpg" alt="Ikan" 
-style="width:100%; height:100%; display:block; margin:auto;" />
+<body class="bg-gray-100 min-h-screen p-4">
+  <div id="app">
+    <div v-if="notif" class="notif">{{ notif }}</div>
 
-  <div id="statusBar" class="status-bar">TUTUP</div>
-  <div id="notif" class="notif"></div>
-
-  <div class="container">
-    <!-- Makanan -->
-    <div class="card">
-      <h3>Makanan</h3>
-      <select id="foodSelect">
-        <option value="">Pilih Menu</option>
-        <option value="Ayam Geprek-20000">Ayam geprek - 20.000</option>
-        <option value="Pecel lele-17000">Pecel lele - 17.000</option>
-        <option value="Mie Pedas Telur-15000">Mie Pedas Telur - 15.000</option>
-      </select>
-
-      <select id="foodExtra" multiple>
-        <option value="Pakai Nasi-5000">Pakai Nasi - 5.000</option>
-        <option value="Tanpa Nasi-0">Tanpa Nasi - 0</option> 
-      </select>
-
-      <select id="foodOption">
-        <option value="">Pilih Opsi</option>
-        <option value="Nasinya digabung">Nasinya digabung</option>
-        <option value="Nasinya dipisah">Nasinya dipisah</option>
-      </select>
-
-      <div class="qty-controls">
-        <button onclick="updateQty('food', -1)">-</button>
-        <span id="foodQty">1</span>
-        <button onclick="updateQty('food', 1)">+</button>
-        <span id="foodSubtotal">0</span></span>
-      </div>
-      <textarea id="foodNote" placeholder="Catatan (opsional)"></textarea>
-      <button class="btn-orange" onclick="addToCart('food')">Masukkan Keranjang</button>
+    <div class="text-center mb-4">
+      <h1 class="text-3xl font-bold">Warung Sutan</h1>
+      <p class="text-sm text-gray-600">Jam buka: 07.00 - 21.00 WIB</p>
+      <p v-if="!isOpen" class="text-red-500 font-semibold">Tutup - Pesanan nonaktif</p>
     </div>
 
-    <!-- Minuman -->
-    <div class="card">
-      <h3>Minuman</h3>
-      <select id="drinkSelect">
-        <option value="">Pilih Menu</option>
-        <option value="Teh Hijau Original-5000">Teh Hijau Original - 5.000</option>
-        <option value="Teh Hijau Susu-6000">Teh Hijau Susu - 6.000</option>
-        <option value="Es Blend Merah Beludru-6000">Es Blend Merah Beludru - 6.000</option>
-        <option value="Es Blend Coklat Sultan-6000">Es Blend Coklat Sultan - 6.000</option>
-      </select>
-
-      <select id="drinkExtra" multiple>
-        <option value="Tanpa Extra-0">Tanpa Extra- 0</option>
-      </select>
-      <select id="drinkOption">
-        <option value="">Pilih Opsi</option>
-        <option value="Dingin">Dingin</option>
-      </select>
-
-      <div class="qty-controls">
-        <button onclick="updateQty('drink', -1)">-</button>
-        <span id="drinkQty">1</span>
-        <button onclick="updateQty('drink', 1)">+</button>
-        <span id="drinkSubtotal">0</span></span>
-      </div>
-      <textarea id="drinkNote" placeholder="Catatan (opsional)"></textarea>
-      <button class="btn-orange" onclick="addToCart('drink')">Masukkan Keranjang</button>
+    <div class="text-center mb-4">
+      <a href="https://sifood.online" target="_blank" class="blink font-bold text-red-600 text-lg">
+        LIHAT WARUNG LAINNYA
+      </a>
     </div>
+
+    <h2 class="text-xl font-semibold mb-2">Makanan</h2>
+    <div :class="{ blurred: !isOpen }" class="grid grid-cols-2 gap-4 mb-4">
+      <div v-for="(item, index) in makanan" :key="index" class="bg-white rounded-lg shadow-md p-2"
+        :class="{ 'opacity-50 pointer-events-none': !item.aktif }">
+        <img :src="item.gambar" alt="makanan" class="w-full h-32 object-contain rounded bg-white">
+        <h3 class="font-bold mt-2">{{ item.nama }}</h3>
+        <p class="text-sm text-gray-600 mb-1">Rp{{ item.harga.toLocaleString() }}</p>
+
+        <div class="flex items-center justify-between mb-1">
+          <div class="flex items-center">
+            <button @click="item.qty = Math.max(1, item.qty - 1)" class="px-2 rounded" style="background:#ff7043;color:white">-</button>
+            <span class="mx-2">{{ item.qty }}</span>
+            <button @click="item.qty++" class="px-2 rounded" style="background:#ff7043;color:white">+</button>
+          </div>
+          <p class="text-sm font-medium">: Rp{{ hitungSubtotal(item).toLocaleString() }}</p>
+        </div>
+
+        <label class="block text-sm font-medium">Topping:</label>
+        <select v-model="item.toppingDipilih" multiple class="w-full border rounded p-1 text-sm mb-1">
+          <option v-for="t in item.topping" :key="t.nama" :value="t">{{ t.nama }} (+Rp{{ t.harga.toLocaleString() }})</option>
+        </select>
+
+        <textarea v-model="item.catatan" placeholder="Catatan (opsional)" class="w-full border rounded p-1 text-sm mb-2"></textarea>
+
+        <button @click="tambahKeKeranjang(item)" class="w-full py-1 rounded hover:opacity-90" style="background:#ff7043;color:white">
+          Tambah ke Keranjang
+        </button>
+      </div>
+    </div>
+
+    <h2 class="text-xl font-semibold mb-2">Keranjang</h2>
+    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+      <div v-if="keranjang.length === 0" class="text-gray-500">Belum ada pesanan.</div>
+      <div v-for="(item, i) in keranjang" :key="i" class="mb-4 border-b pb-2">
+        <div class="flex justify-between items-center">
+          <div>
+            <h4 class="font-semibold">{{ item.nama }}</h4>
+            <p class="text-sm text-gray-600">Qty: {{ item.qty }}</p>
+            <p class="text-sm text-gray-600">Topping: {{ item.toppingDipilih.map(t => t.nama).join(', ') }}</p>
+            <p class="text-sm text-gray-600">Catatan: {{ item.catatan || '-' }}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-semibold">Rp{{ hitungSubtotal(item).toLocaleString() }}</p>
+            <button @click="hapusItem(i)" class="text-red-500 text-sm">Hapus</button>
+          </div>
+        </div>
+      </div>
+      <div class="text-right font-bold mt-2">Total Pesanan: Rp{{ totalHarga.toLocaleString() }}</div>
+    </div>
+
+    <div class="mb-2">
+      <label class="block font-medium mb-1">Lokasi Antar:</label>
+      <select v-model="lokasi" class="w-full border rounded p-2 text-sm">
+        <option disabled value="">-- 📍Pilih Lokasi --</option>
+        <option v-for="(ongkir, lokasi) in lokasiOngkir" :value="lokasi">
+          {{ lokasi }} - Rp{{ ongkir.toLocaleString() }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium mb-1">Detail Alamat:</label>
+      <input v-model="alamat" type="text" placeholder="Misal: gang beringin rumah no 3 sebelah kanan KM8" class="w-full border rounded p-2 text-sm">
+    </div>
+
+    <div class="text-right font-bold mb-4">
+      Total + Ongkir: Rp{{ (totalHarga + ongkirTerpilih).toLocaleString() }}
+    </div>
+
+    <button :disabled="keranjang.length === 0 || !isOpen" @click="kirimPesanan"
+      class="w-full py-2 rounded hover:opacity-90 disabled:opacity-50" style="background:#ff7043;color:white">
+      Kirim Pesanan via WhatsApp
+    </button>
   </div>
 
-  <!-- Keranjang -->
-  <div class="cart">
-    <h3>Keranjang</h3>
-    <div id="cartList"></div>
-    <div>Total Pesanan: <span id="cartTotal">0</span></div>
-
-    <select id="lokasiAntar" onchange="updateOngkir()">
-
-      <option value="">Pilih Lokasi Antar</option>
-
-      <option value="Kilometer.0 -15000">Kilometer-0 - 15.000</option>
-
-      <option value="Kilometer.1 -14000">Kilometer-1 - 14.000</option>
-
-      <option value="Kilometer.2 -12000">Kilometer-2 - 12.000</option>
-
-      <option value="Kilometer.3 -11000">Kilometer-3 - 11.000</option>
-
-      <option value="Kilometer.4 -10000">Kilometer-4 - 10.000</option>
-
-      <option value="Mapaddegat Bawah -10000">Mapaddegat Bawah - 10.000</option>
-
-       <option value="Kilometer.5 -8000">Kilometer-5 - 8.000</option>
-
-      <option value="Kilometer.6 -7000">Kilometer-6 - 7.000</option>
-
-      <option value="SP2 Setelah Perusda dst -8000">SP2 Setelah Perusda dst - 8.000</option>
-
-      <option value="Kilometer.7 -6000">Kilometer-7 - 6.000</option>
-
-      <option value="Kilometer.8 -6000">Kilometer-8 - 6.000</option>
-
-      <option value="Kilometer.9 -6000">Kilometer-9 - 6.000</option>
-
-      <option value="Kilometer.10 & SP3 Sekitarnya - 7000">Kilometer-10 & SP3 Sekitarnya - 7.000</option>
-
-
-    </select>
-    <div>Total + Ongkir: <span id="totalPlusOngkir">0</span></div>
-    <textarea id="alamatDetail" class="alamat-detail" placeholder="detail alamat wajib di isi..."></textarea>
-    <button class="btn-kirim" onclick="checkout()">
-  KIRIM ORDERAN KE WHATSAPP ADMIN
-</button>
   <script>
-    let cart = [];
-    let ongkir = 0;
-    const prices = {"Tanpa Nasi": 0, "Pakai Nasi": 5000,};
+    new Vue({
+      el: '#app',
+      data: {
+        notif: '',
+        keranjang: [],
+        alamat: '',
+        lokasi: '',
+        lokasiOngkir: { KM_0: 14000, KM_1: 12000, KM_2: 11000, KM_3: 10000, KM_4: 8000, MAPADDEGAT_BAWAH: 9000, KM_5: 7000, KM_6: 6000, SP2_DALAM: 8000, KM_7: 5000, KM_8: 5000, KM_9: 6000, KM_10: 8000, SP3_DALAM: 8000 },
+        jamBuka: 00,
+        jamTutup: 24,
+        isOpen: true,
+        makanan: [
+          {
+            nama: 'Ayam Geprek',
+            harga: 20000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Pakai_Nasi', harga: 5000 }, { nama: 'Tanpa_Nasi', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          },
+          {
+            nama: 'pecel lele',
+            harga: 18000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Pakai_Nasi', harga: 5000 }, { nama: 'Tanpa_Nasi', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          },
+          
+          {
+            nama: 'Mie Goreng telur Pedas',
+            harga: 15000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Tanpa_Topping', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          },
+          {
+            nama: 'Teh Hijau original',
+            harga: 5000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Tanpa_Topping', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          },
+          {
+            nama: 'Teh Hijau + susu',
+            harga: 6000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Tanpa_Topping', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          },
+          {
+            nama: 'es blend beludru',
+            harga: 6000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Tanpa_Topping', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          },
+          {
+            nama: 'es blend Coklat sultan',
+            harga: 6000,
+            gambar: 'https://i.ibb.co.com/V0C3BWG1/1747140399374v-Ayam-Gulai078263be965bc90ec-5-11zon.jpg',
+            topping: [{ nama: 'Tanpa_Topping', harga: 0 }],
+            toppingDipilih: [],
+            qty: 1,
+            catatan: '',
+            aktif: true
+          }
+        ]
+      },
+      computed: {
+        totalHarga() {
+          return this.keranjang.reduce((total, item) => total + this.hitungSubtotal(item), 0);
+        },
+        ongkirTerpilih() {
+          return this.lokasiOngkir[this.lokasi] || 0;
+        }
+      },
+      created() {
+        this.cekJamBuka();
+        setInterval(this.cekJamBuka, 60000);
+      },
+      methods: {
+        cekJamBuka() {
+          const jam = new Date().getHours();
+          this.isOpen = jam >= this.jamBuka && jam < this.jamTutup;
+        },
+        hitungSubtotal(item) {
+          const toppingTotal = item.toppingDipilih.reduce((sum, t) => sum + t.harga, 0);
+          return (item.harga + toppingTotal) * item.qty;
+        },
+        tambahKeKeranjang(item) {
+          if (item.toppingDipilih.length === 0) {
+            this.showNotif('Pilih minimal 1 topping.');
+            return;
+          }
+          const ada = this.keranjang.find(i =>
+            i.nama === item.nama &&
+            JSON.stringify(i.toppingDipilih) === JSON.stringify(item.toppingDipilih)
+          );
+          if (ada) {
+            this.showNotif('Item dengan topping sama sudah ada di keranjang.');
+            return;
+          }
+          this.keranjang.push({
+            nama: item.nama,
+            harga: item.harga,
+            qty: item.qty,
+            toppingDipilih: [...item.toppingDipilih],
+            catatan: item.catatan
+          });
+          item.qty = 1;
+          item.toppingDipilih = [];
+          item.catatan = '';
 
-    function showNotif(msg) {
-      const el = document.getElementById("notif");
-      el.textContent = msg;
-      el.classList.add("show");
-      setTimeout(() => el.classList.remove("show"), 3000);
-    }
-
-    function updateStatus() {
-      const jam = new Date().getHours();
-      const buka = (jam >= 00 && jam < 24);
-      const statusEl = document.getElementById("statusBar");
-      statusEl.textContent = buka ? "BUKA" : "TUTUP";
-      statusEl.style.background = buka ? "green" : "#dc3545";
-
-      const semuaTombol = document.querySelectorAll("button");
-      semuaTombol.forEach(btn => {
-        btn.disabled = !buka;
-        btn.style.opacity = buka ? "1" : "0.5";
-        btn.style.cursor = buka ? "pointer" : "not-allowed";
-      });
-    }
-
-    function updateQty(type, delta) {
-      const qtyEl = document.getElementById(`${type}Qty`);
-      let qty = parseInt(qtyEl.textContent) + delta;
-      qty = Math.max(1, qty);
-      qtyEl.textContent = qty;
-      updateSubtotal(type);
-    }
-
-    function updateSubtotal(type) {
-      const select = document.getElementById(`${type}Select`).value;
-      if (!select) return;
-      const [_, price] = select.split("-");
-      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
-      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
-      let totalExtra = extras.reduce((sum, ex) => sum + (prices[ex] || 0), 0);
-      const subtotal = (parseInt(price) + totalExtra) * qty;
-      document.getElementById(`${type}Subtotal`).textContent = subtotal;
-    }
-
-    document.querySelectorAll("select").forEach(el => el.addEventListener("change", () => {
-      if (el.id.includes("Select") || el.id.includes("Extra")) {
-        const type = el.id.includes("food") ? "food" : "drink";
-        updateSubtotal(type);
+          // Notifikasi berhasil
+          this.showNotif('Berhasil menambahkan item ke keranjang.');
+        },
+        hapusItem(i) {
+          this.keranjang.splice(i, 1);
+        },
+        kirimPesanan() {
+          if (!this.lokasi || !this.alamat) {
+            this.showNotif('Pilih lokasi dan isi detail alamat.');
+            return;
+          }
+          const sekarang = new Date();
+const waktu = sekarang.toLocaleString('id-ID', {
+  weekday: 'long', year: 'numeric', month: 'long',
+  day: 'numeric', hour: '2-digit', minute: '2-digit'
+});
+let pesan = `*PESANAN BARU - DAPOER WAWA*\n${waktu}\n\nDetail Pesanan:`;
+          this.keranjang.forEach((item, i) => {
+            pesan += `\n${i + 1}. ${item.nama}\nQty: ${item.qty}\nTopping: ${item.toppingDipilih.map(t => t.nama).join(', ') || '-'}\nCatatan: ${item.catatan || '-'}\nSubtotal: Rp${this.hitungSubtotal(item).toLocaleString()}\n`;
+          });
+          pesan += '\n----------------------------';
+          pesan += `\n*Total Pesanan:* Rp${this.totalHarga.toLocaleString()}`;
+          pesan += `\n*Ongkir (${this.lokasi}):* Rp${this.ongkirTerpilih.toLocaleString()}`;
+          pesan += `\n*Total Bayar:* Rp${(this.totalHarga + this.ongkirTerpilih).toLocaleString()}`;
+          pesan += `\n\n*Alamat Pengantaran:*\n${this.alamat}\n\nTerima kasih atas pesanannya di sifood.online .\nSilakan tunggu konfirmasi dari kami.`;
+          window.open(`https://wa.me/6285266610522?text=${encodeURIComponent(pesan)}`, '_blank');
+        },
+        showNotif(pesan) {
+          this.notif = pesan;
+          setTimeout(() => this.notif = '', 3000);
+        }
       }
-    }));
-
-    function addToCart(type) {
-      const select = document.getElementById(`${type}Select`).value;
-      const option = document.getElementById(`${type}Option`).value;
-      const extras = Array.from(document.getElementById(`${type}Extra`).selectedOptions).map(opt => opt.value.split("-")[0]);
-      if (!select) return showNotif("Pilih menu terlebih dahulu.");
-      if (extras.length === 0) return showNotif("Pilih minimal satu extra.");
-      if (!option) return showNotif("Pilih Salah satu Opsi.");
-
-      const [name, price] = select.split("-");
-      const qty = parseInt(document.getElementById(`${type}Qty`).textContent);
-      const note = document.getElementById(`${type}Note`).value;
-      const extraTotal = extras.reduce((sum, code) => sum + (prices[code] || 0), 0);
-      const subtotal = (parseInt(price) + extraTotal) * qty;
-
-      const exists = cart.some(item =>
-        item.name === name && item.option === option &&
-        item.extras.length === extras.length &&
-        item.extras.every((v, i) => v === extras[i])
-      );
-      if (exists) return showNotif("Item sudah ada di keranjang.");
-
-      cart.push({ name, qty, option, extras, note, subtotal });
-      showNotif("Berhasil ditambahkan ke keranjang.");
-      renderCart();
-    }
-
-    function renderCart() {
-      const list = document.getElementById("cartList");
-      list.innerHTML = "";
-      let total = 0;
-      cart.forEach((item, i) => {
-        total += item.subtotal;
-        list.innerHTML += `
-          <div class="cart-item">
-            ${item.name} (${item.qty}x) - ${item.subtotal}<br>
-            Extra: ${item.extras.join(", ")}<br>
-            Opsi: ${item.option}<br>
-            Catatan: ${item.note}<br>
-            <button onclick="removeCart(${i})">Hapus</button>
-          </div>
-        `;
-      });
-      document.getElementById("cartTotal").textContent = total;
-      updateTotalOngkir();
-    }
-
-    function removeCart(i) {
-      cart.splice(i, 1);
-      renderCart();
-    }
-
-    function updateOngkir() {
-      const val = document.getElementById("lokasiAntar").value;
-      if (!val) return;
-      const [_, biaya] = val.split("-");
-      ongkir = parseInt(biaya);
-      updateTotalOngkir();
-    }
-
-    function updateTotalOngkir() {
-      const total = parseInt(document.getElementById("cartTotal").textContent);
-      document.getElementById("totalPlusOngkir").textContent = total + ongkir;
-    }
-
-    function checkout() {
-      const lokasi = document.getElementById("lokasiAntar").value;
-      const alamat = document.getElementById("alamatDetail").value.trim();
-      if (!cart.length) return showNotif("Keranjang kosong.");
-      if (!lokasi) return showNotif("Pilih lokasi antar.");
-      if (!alamat) return showNotif("Isi alamat.");
-
-      const waktu = new Date().toLocaleString("id-ID");
-      let msg = `*Halo Admin.... Tolong proses Orderan Saya di DAPOER WAWA*%0A Waktu: ${waktu}%0A%0A`;
-
-      cart.forEach((item, i) => {
-        msg += `${i+1}. ${item.name}%0A`;
-        msg += `Qty: ${item.qty}%0A`;
-        if (item.extras.length) msg += `Extra: ${item.extras.join(", ")}%0A`;
-        if (item.option) msg += `Opsi: ${item.option}%0A`;
-        if (item.note) msg += `Catatan: ${item.note}%0A`;
-        msg += `Subtotal: ${item.subtotal.toLocaleString("id-ID")}%0A%0A`;
-      });
-
-      msg += `-----------------------------%0A`;
-      const total = parseInt(document.getElementById("cartTotal").textContent);
-      const lokasiTxt = lokasi.split("-")[0];
-      msg += `Total: ${total.toLocaleString("id-ID")}%0A`;
-      msg += `Ongkir (${lokasiTxt}): ${ongkir.toLocaleString("id-ID")}%0A`;
-      msg += `*Total Bayar: ${(total + ongkir).toLocaleString("id-ID")}*%0A%0A`;
-      msg += `*Detail Alamat: ${alamat}*%0A`;
-      msg += `------------------------------%0A`;
-      msg += `Terima Kasih Telah Belanja di  Sifood. Mau Belanja di Warung Lainnya? klik: https://makmur-hidayat.github.io/Sifood-Home/ . Stanbay Hapenya yah, Kurir Akan Hubungi Kamu`;
-
-      const waLink = `https://wa.me/6285266610522?text=${msg}`;
-      window.open(waLink, '_blank');
-    }
-
-    updateStatus();
-    setInterval(updateStatus, 60000);
+    });
   </script>
 </body>
 </html>
