@@ -2,488 +2,69 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ASKAB PSSI MENTAWAI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi PSSI Mentawai Mobile</title>
+    
     <style>
-        /* CSS Dasar dan Mobile-First */
-        :root {
-            --primary-color: #007BFF; /* Biru Khas PSSI/Sport */
-            --secondary-color: #FFC107; /* Aksen Kuning */
-            --bg-color: #F8F9FA; /* Latar Belakang Cerah */
-            --card-bg: #FFFFFF; /* Latar Belakang Kartu */
-            --text-color: #343A40; /* Teks Gelap */
-            --header-height: 60px;
-            --navbar-height: 60px;
-        }
-
-        * {
-            box-sizing: border-box;
+        body, html {
             margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent; /* Menghilangkan highlight saat disentuh di mobile */
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: var(--navbar-height); /* Sisakan ruang untuk navigasi bawah */
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch; /* Performa scrolling di iOS */
-        }
-
-        /* 1. Header (Logo & Nama Organisasi) - FREEZE */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
+            height: 100%; 
             width: 100%;
-            height: var(--header-height);
+            overflow-x: hidden; /* Mencegah scrolling horizontal yang tidak perlu */
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .app-container {
+            width: 100vw; /* 100% lebar viewport */
+            min-height: 100vh; /* Memastikan setidaknya setinggi viewport */
             display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0 15px;
-            background-color: var(--card-bg);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            justify-content: center;
+            padding: 0; 
+            box-sizing: border-box;
         }
 
-        .logo {
-            height: 40px;
-            width: auto;
-            margin-right: 10px;
-            object-fit: contain;
-        }
-
-        .org-name {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: var(--primary-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Konten Utama */
-        .content {
-            padding-top: var(--header-height); /* Jarak dari header yang fixed */
-            padding-bottom: 20px;
-            min-height: calc(100vh - var(--header-height) - var(--navbar-height));
+        #gas-app {
+            /* Menggunakan URL Google Apps Script Anda */
             width: 100%;
-            max-width: 600px; /* Batasan lebar agar fokus di seluler */
-            margin: 0 auto;
-            padding-left: 15px;
-            padding-right: 15px;
+            height: 800px; /* Tinggi yang Anda tentukan, akan menyebabkan scrolling di ponsel kecil */
+            min-height: 800px; 
+            border: none;
+            display: block; 
         }
 
-        /* 2. Navigasi Bawah (Mobile Navigation) - FREEZE */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--navbar-height);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background-color: var(--card-bg);
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+        /* Penyesuaian untuk tampilan seperti perangkat seluler di layar yang lebih besar (opsional) */
+        @media (min-width: 600px) {
+            .app-container {
+                max-width: 450px; /* Batas lebar maksimum */
+                margin: 10px auto; 
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow: hidden; 
+                background-color: white;
+            }
+            
+            #gas-app {
+                height: 780px;
+                min-height: unset;
+            }
         }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 0.8em;
-            font-weight: 600;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: color 0.3s ease;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--primary-color);
-        }
-
-        .nav-icon {
-            font-size: 1.5em;
-            margin-bottom: 3px;
-        }
-
-        /* 3. Tampilan Konten Tab */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 4. Kartu Berita (Elegan & Modern) */
-        .news-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            margin-bottom: 15px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .news-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        .card-title {
-            font-size: 1.1em;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: var(--text-color);
-            line-height: 1.4;
-        }
-
-        .card-date {
-            font-size: 0.8em;
-            color: #6C757D;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .card-excerpt {
-            font-size: 0.9em;
-            color: #495057;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* 5. Dialog / Modal (Untuk Detail Berita) */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-            max-width: 95%;
-            animation: slideInUp 0.3s;
-        }
-
-        .close-btn {
-            color: #AAA;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        .close-btn:hover, .close-btn:focus {
-            color: var(--primary-color);
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .modal-title {
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 5px;
-        }
-
-        .modal-body img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        /* 6. Halaman Tentang (About) */
-        .about-section h3 {
-            color: var(--primary-color);
-            border-left: 4px solid var(--secondary-color);
-            padding-left: 10px;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-
-        .management-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .management-list li {
-            background: #E9ECEF;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .admin-login-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 700;
-            margin-top: 30px;
-            transition: background-color 0.3s ease;
-        }
-
-        .admin-login-btn:hover {
-            background-color: #0056b3;
-        }
-
-        /* Animasi Modal */
-        @keyframes slideInUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* Pustaka Ikon Sederhana (Jika tidak menggunakan font awesome) */
-        .icon-home::before { content: "🏠"; }
-        .icon-event::before { content: "📅"; }
-        .icon-club::before { content: "⚽"; }
-        .icon-about::before { content: "ℹ️"; }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <img src="placeholder-logo.png" alt="Logo" class="logo" id="header-logo">
-        <span class="org-name">ASKAB PSSI MENTAWAI</span>
-    </header>
-
-    <main class="content">
-        <div id="home-content" class="tab-content active">
-            <div class="news-card" onclick="openModal('Berita Utama Hari Ini', '2025-10-14', 'images/berita1.jpg', 'Ini adalah detail lengkap dari berita utama. ASKAB PSSI Mentawai sukses menggelar turnamen U-17 di Tuapeijat. Turnamen ini diikuti oleh 12 klub dari 4 kecamatan. Tujuan turnamen ini adalah untuk menjaring bakat muda di Kepulauan Mentawai. Teks ini harusnya lebih panjang dan mendalam.')">
-                <img src="https://via.placeholder.com/600x180?text=Gambar+Berita+1" alt="Gambar Berita" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">14 Oktober 2025</span>
-                    <h2 class="card-title">ASKAB PSSI Mentawai Sukses Gelar Turnamen U-17</h2>
-                    <p class="card-excerpt">ASKAB PSSI Mentawai sukses menggelar turnamen U-17 di Tuapeijat. Turnamen ini diikuti oleh 12 klub dari 4 kecamatan. Tujuan turnamen ini adalah untuk menjaring bakat muda di Kepulauan Mentawai...</p>
-                </div>
-            </div>
-            <div class="news-card" onclick="openModal('Rapat Koordinasi Persiapan Liga 3', '2025-10-10', 'images/berita2.jpg', 'Detail Rapat Koordinasi: Telah diadakan rapat penting antara pengurus ASKAB PSSI Mentawai dengan perwakilan klub-klub. Fokus utama adalah persiapan klub Mentawai untuk mengikuti kualifikasi Liga 3 Regional Sumatera Barat. Dana dan logistik menjadi bahasan utama.')">
-                <img src="https://via.placeholder.com/600x180?text=Gambar+Berita+2" alt="Gambar Berita" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">10 Oktober 2025</span>
-                    <h2 class="card-title">Rapat Koordinasi Persiapan Liga 3 Regional</h2>
-                    <p class="card-excerpt">Telah diadakan rapat penting antara pengurus ASKAB PSSI Mentawai dengan perwakilan klub-klub. Fokus utama adalah persiapan klub Mentawai untuk mengikuti kualifikasi Liga 3 Regional Sumatera Barat...</p>
-                </div>
-            </div>
-            <div class="news-card" onclick="openModal('Pembukaan Sekolah Sepak Bola (SSB) Baru', '2025-09-25', 'images/berita3.jpg', 'Detail Pembukaan SSB: ASKAB PSSI Mentawai meresmikan Sekolah Sepak Bola (SSB) baru di Siberut Selatan. Ini adalah bagian dari program jangka panjang untuk pemerataan pembinaan usia dini di seluruh Mentawai. Diharapkan muncul talenta-talenta baru dari pulau terluar.')">
-                <img src="https://via.placeholder.com/600x180?text=Gambar+Berita+3" alt="Gambar Berita" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">25 September 2025</span>
-                    <h2 class="card-title">Peresmian Sekolah Sepak Bola di Siberut Selatan</h2>
-                    <p class="card-excerpt">ASKAB PSSI Mentawai meresmikan Sekolah Sepak Bola (SSB) baru di Siberut Selatan. Ini adalah bagian dari program jangka panjang untuk pemerataan pembinaan usia dini...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="event-content" class="tab-content">
-            <h2 style="font-size: 1.3em; font-weight: 700; margin-bottom: 20px;">Daftar Kegiatan Terbaru</h2>
-
-            <div class="news-card" onclick="openModal('Turnamen Futsal Bupati Cup', '2025-11-01', 'images/event1.jpg', 'Turnamen Futsal Bupati Cup akan digelar pada 1-15 November 2025 di GOR Tuapeijat. Pendaftaran dibuka untuk umum dan klub-klub di Mentawai. Total hadiah jutaan rupiah! Datang dan saksikan.')">
-                <img src="https://via.placeholder.com/600x180?text=Gambar+Event+1" alt="Gambar Event" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">Mulai: 01 November 2025</span>
-                    <h2 class="card-title">Turnamen Futsal Bupati Cup 2025</h2>
-                    <p class="card-excerpt">Turnamen Futsal Bupati Cup akan digelar pada 1-15 November 2025 di GOR Tuapeijat. Pendaftaran dibuka untuk umum dan klub-klub di Mentawai...</p>
-                </div>
-            </div>
-
-            <div class="news-card" onclick="openModal('Kursus Pelatih Lisensi D', '2025-12-05', 'images/event2.jpg', 'ASKAB PSSI Mentawai bekerja sama dengan ASPROV PSSI Sumbar akan menyelenggarakan Kursus Pelatih Lisensi D. Tempat: Kantor ASKAB. Tanggal: 5-10 Desember 2025. Terbuka untuk semua mantan pemain dan pegiat sepak bola.')">
-                <img src="https://via.placeholder.com/600x180?text=Gambar+Event+2" alt="Gambar Event" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">Mulai: 05 Desember 2025</span>
-                    <h2 class="card-title">Kursus Pelatih Lisensi D PSSI</h2>
-                    <p class="card-excerpt">ASKAB PSSI Mentawai bekerja sama dengan ASPROV PSSI Sumbar akan menyelenggarakan Kursus Pelatih Lisensi D...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="klub-content" class="tab-content">
-            <h2 style="font-size: 1.3em; font-weight: 700; margin-bottom: 20px;">Klub Terdaftar ASKAB PSSI Mentawai</h2>
-
-            <div class="news-card" onclick="openModal('Profil Klub Macan Tutul FC', 'Klub', 'images/klub1.jpg', 'Klub Macan Tutul FC berasal dari Kecamatan Sipora Utara. Didirikan tahun 2018 dan merupakan salah satu klub tertua dan paling konsisten di Mentawai. Memiliki tim U-17 dan Senior.')">
-                <img src="https://via.placeholder.com/600x180?text=Logo+Klub+1" alt="Logo Klub" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">Status: Aktif</span>
-                    <h2 class="card-title">Macan Tutul FC - Sipora Utara</h2>
-                    <p class="card-excerpt">Klub Macan Tutul FC berasal dari Kecamatan Sipora Utara. Didirikan tahun 2018 dan merupakan salah satu klub tertua dan paling konsisten...</p>
-                </div>
-            </div>
-
-            <div class="news-card" onclick="openModal('Profil Klub Bintang Laut Siberut', 'Klub', 'images/klub2.jpg', 'Bintang Laut Siberut adalah klub yang fokus pada pembinaan usia muda (U-15 dan U-17). Berasal dari Siberut Barat. Visi klub: Mencetak pemain Mentawai yang bisa berlaga di level nasional.')">
-                <img src="https://via.placeholder.com/600x180?text=Logo+Klub+2" alt="Logo Klub" class="card-image">
-                <div class="card-body">
-                    <span class="card-date">Status: Aktif</span>
-                    <h2 class="card-title">Bintang Laut Siberut</h2>
-                    <p class="card-excerpt">Bintang Laut Siberut adalah klub yang fokus pada pembinaan usia muda (U-15 dan U-17). Berasal dari Siberut Barat. Visi klub: Mencetak pemain Mentawai...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="about-content" class="tab-content">
-            <div class="about-section">
-                <h3>Profil Organisasi</h3>
-                <p>ASKAB PSSI Mentawai (Asosiasi Kabupaten Persatuan Sepakbola Seluruh Indonesia Kepulauan Mentawai) adalah badan resmi yang menaungi seluruh kegiatan sepak bola di wilayah Kabupaten Kepulauan Mentawai, Sumatera Barat. Organisasi ini bertanggung jawab dalam pembinaan, pengembangan, dan pelaksanaan kompetisi sepak bola mulai dari usia dini hingga tingkat senior.</p>
-                <p><strong>Visi:</strong> Menjadikan Kabupaten Kepulauan Mentawai sebagai lumbung talenta sepak bola yang unggul dan berdaya saing di tingkat regional.</p>
-                <p><strong>Misi:</strong> Menyelenggarakan kompetisi yang berkesinambungan dan melakukan pembinaan usia dini secara merata di seluruh pulau.</p>
-
-                <h3>Struktur & Nama Pengurus Inti</h3>
-                <ul class="management-list">
-                    <li>**Ketua Umum:** [Nama Ketua Umum]</li>
-                    <li>**Wakil Ketua:** [Nama Wakil Ketua]</li>
-                    <li>**Sekretaris Umum:** [Nama Sekretaris]</li>
-                    <li>**Bendahara:** [Nama Bendahara]</li>
-                    <li>**Exco Bidang Kompetisi:** [Nama Exco 1]</li>
-                    <li>**Exco Bidang Pembinaan:** [Nama Exco 2]</li>
-                </ul>
-
-                <a href="https://script.google.com/macros/s/AKfycbwLmho_uNvzjy_APdsjw7veHj8QBONgQKxzjJxFnKdgzaNpJGkJkYN7hYDVFF10IarlIg/exec" target="_blank" class="admin-login-btn">LOGIN ADMIN</a>
-            </div>
-        </div>
-
-    </main>
-
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active" data-tab="home-content">
-            <span class="nav-icon icon-home"></span>
-            Home
-        </a>
-        <a href="#" class="nav-item" data-tab="event-content">
-            <span class="nav-icon icon-event"></span>
-            Event
-        </a>
-        <a href="#" class="nav-item" data-tab="klub-content">
-            <span class="nav-icon icon-club"></span>
-            Klub
-        </a>
-        <a href="#" class="nav-item" data-tab="about-content">
-            <span class="nav-icon icon-about"></span>
-            Tentang
-        </a>
-    </nav>
-
-    <div id="news-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">×</span>
-            <h2 class="modal-title" id="modal-title"></h2>
-            <div class="modal-body">
-                <img src="" id="modal-image" style="display: none;">
-                <p style="font-size: 0.9em; color: #6C757D; margin-bottom: 15px;" id="modal-date"></p>
-                <p id="modal-text"></p>
-            </div>
-        </div>
+    <div class="app-container">
+        <iframe 
+            src="https://script.google.com/macros/s/AKfycbzgdfkeVPAkjKar7-NYrMKLVdoPOc6bhLh_fYvP9lVOJu_7dMaKfMoWBbTKVzZ0Gida/exec" 
+            id="gas-app"
+            width="100%" 
+            height="800px" 
+            style="border: none;"
+            title="Aplikasi Manajemen PSSI Mentawai"
+            allowfullscreen
+        ></iframe>
     </div>
 
-    <script>
-        // Fungsi untuk mengganti Tab / Konten
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Hapus kelas 'active' dari semua tab-content dan nav-item
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.querySelectorAll('.nav-item').forEach(nav => {
-                    nav.classList.remove('active');
-                });
-
-                // Tampilkan konten yang dipilih
-                const targetId = this.getAttribute('data-tab');
-                document.getElementById(targetId).classList.add('active');
-
-                // Aktifkan item navigasi yang diklik
-                this.classList.add('active');
-
-                // Scroll ke atas halaman setiap kali pindah tab (UX mobile)
-                window.scrollTo(0, 0);
-            });
-        });
-
-        // Fungsi untuk membuka Modal (Detail Berita)
-        function openModal(title, date, imageUrl, fullText) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-date').innerText = date;
-            document.getElementById('modal-text').innerText = fullText;
-
-            const modalImage = document.getElementById('modal-image');
-            if (imageUrl && imageUrl.startsWith('images/')) {
-                // Gambar nyata, tampilkan
-                modalImage.src = imageUrl;
-                modalImage.style.display = 'block';
-            } else if (imageUrl.includes('placeholder')) {
-                // Placeholder, bisa disembunyikan jika tidak ada gambar nyata
-                modalImage.src = imageUrl;
-                modalImage.style.display = 'block';
-            } else {
-                 // Sembunyikan jika tidak ada gambar
-                 modalImage.style.display = 'none';
-            }
-            
-            document.getElementById('news-modal').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Nonaktifkan scrolling body saat modal terbuka
-        }
-
-        // Fungsi untuk menutup Modal
-        function closeModal() {
-            document.getElementById('news-modal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Aktifkan kembali scrolling body
-        }
-
-        // Tutup modal jika user klik di luar area modal
-        window.onclick = function(event) {
-            const modal = document.getElementById('news-modal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-    </script>
 </body>
 </html>
